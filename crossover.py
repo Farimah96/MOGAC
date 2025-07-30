@@ -73,8 +73,8 @@ class MOGACCrossover(Crossover):
         while mating_count < n_matings:
             # Select a random parent to copy
             parent_idx = np.random.randint(0, X.shape[0])
-            Y[0, mating_count, :] = X[parent_idx, :]  # Copy parent as first offspring
-            Y[1, mating_count, :] = X[parent_idx, :]  # Copy parent as second offspring
+            Y[0, mating_count, :] = X[parent_idx, :]  # Copy parent as 1st offspring
+            Y[1, mating_count, :] = X[parent_idx, :]  # Copy parent as 2nd offspring
             mating_count += 1
 
         return Y
