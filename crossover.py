@@ -43,7 +43,7 @@ class MOGACCrossover(Crossover):
                 parent2_idx = indices[i + 1] if i + 1 < len(indices) else indices[0]  # Loop back to first parent if no more pairs
                 if parent1_idx >= X.shape[0] or parent2_idx >= X.shape[0]:
                     continue  # Skip invalid indices
-                if np.random.random() < float(self.prob):
+                if np.random.random() < self.prob.value:
                     cross_point1 = np.random.randint(0, problem.n_var)
                     cross_point2 = np.random.randint(cross_point1, problem.n_var)
                     # First offspring from parent2 to parent1
