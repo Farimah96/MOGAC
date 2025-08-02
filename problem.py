@@ -85,40 +85,20 @@ class Problem(ElementwiseProblem):
                             src_end_time = copy_schedule[src][1]
                             comm_time = self._calculate_comm_time(packets, src_pe, pe_id)
                             max_dependency_end = max(max_dependency_end, src_end_time + comm_time)
-                            
-                            # Check link connection and adjust communication time if incompatible    ##########  new  #########
+                            # Check link connection and adjust communication time if incompatible
                             link_idx = link_alloc[0] - 1 if link_alloc[0] > 0 else 0
                             connect_pe = link_connect[link_idx * self.n_pe_types + pe_id] if link_idx < len(link_connect) // self.n_pe_types else pe_id
                             if connect_pe != src_pe and connect_pe >= 0:
                                 additional_delay = 2  # Additional delay for incompatible connection
-                                comm_time += additional_delay                                        ##########  new  #########
-                                
-                                
-                            # Adjust scheduling based on core assignment                              ##########  new  #########
+                                comm_time += additional_delay
+                            # Adjust scheduling based on core assignment
                             core_idx = core_assign[pe_id] if pe_id < len(core_assign) else 0
                             if core_idx > 0:
                                 core_delay = graph['tasks'][task_id]['duration'] * 0.1  # 10% delay for additional core usage
                                 max_dependency_end += core_delay
-                                                                                                      ##########  new  #########
-                                
-                                max_dependency_end = max(max_dependency_end, src_end_time + comm_time)
-                                # Check link connection and adjust communication time if incompatible
-                                link_idx = link_alloc[0] - 1 if link_alloc[0] > 0 else 0
-                                connect_pe = link_connect[link_idx * self.n_pe_types + pe_id] if link_idx < len(link_connect) // self.n_pe_types else pe_id
-                                if connect_pe != src_pe and connect_pe >= 0:
-                                    additional_delay = 2  # Additional delay for incompatible connection
-                                    comm_time += additional_delay
-
-                                # Adjust scheduling based on core assignment
-                                core_idx = core_assign[pe_id] if pe_id < len(core_assign) else 0
-                                if core_idx > 0:
-                                    core_delay = graph['tasks'][task_id]['duration'] * 0.1  # 10% delay for additional core usage
-                                    max_dependency_end += core_delay
-                                    max_dependency_end = max(max_dependency_end, src_end_time + comm_time)
-                                    
+                            # Update link usage only once per edge
                             if link_alloc[0] > 0 and (graph_idx, copy_idx, src, tgt) not in processed_edges:
                                 link_usage += packets
-                                comm_time = self._calculate_comm_time(packets, src_pe, pe_id)
                                 processed_edges.add((graph_idx, copy_idx, src, tgt))
                                 print(f"Edge ({src}, {tgt}) in graph {graph_idx}, copy {copy_idx}: {packets} packets, comm_time={comm_time}")
                                                                                                         
